@@ -58,21 +58,35 @@ defmodule Exyt.Client do
   end
 
   @doc """
-  
+
   Returns the authorization url with request token and redirect uri
 
   ## Example
 
       iex> Exyt.Client.authorize_url(%Exyt.Client{})
-      "https://accounts.google.com/o/oauth2/auth"
+      "https://accounts.google.com/o/oauth2/auth?client_id=&redirect_uri=&response_type=code&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fyoutube"
 
   """
-  @spec authorize_url(t) :: binary
-  def authorize_url(%Client{} = client) do
-    endpoint(client, client.authorize_url)
+  @spec authorize_url(t, binary) :: binary
+  def authorize_url(%Client{} = client, scope \\ @scope) do
+    params =
+      %{}
+      |> Map.put(:response_type, "code")
+      |> Map.put(:client_id, client.client_id)
+      |> Map.put(:redirect_uri, client.redirect_uri)
+      |> Map.put(:scope, scope)
+
+    endpoint(client, client.authorize_url) <> "?" <> URI.encode_query(params)
+  end
+
+  def token_url(%Client{} = client) do
+    endpoint(client, client.token_url)
   end
 
   defp endpoint(client, <<"/"::utf8, _::binary>> = endpoint) do
     client.site <> endpoint
+  end
+  defp endpoint(client, endpoint) do
+    client.site <> "/" <> endpoint
   end
 end
