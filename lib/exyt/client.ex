@@ -56,12 +56,16 @@ defmodule Exyt.Client do
   def new(client \\ %Client{}, opts) do
     struct(client, opts)
   end
+  def new(), do: new(%Client{}, %{})
 
   @doc """
 
   Returns the authorization url with request token and redirect uri
 
   ## Example
+
+      iex> Exyt.Client.authorize_url()
+      "https://accounts.google.com/o/oauth2/auth?client_id=&redirect_uri=&response_type=code&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fyoutube"
 
       iex> Exyt.Client.authorize_url(%Exyt.Client{})
       "https://accounts.google.com/o/oauth2/auth?client_id=&redirect_uri=&response_type=code&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fyoutube"
@@ -78,10 +82,23 @@ defmodule Exyt.Client do
 
     endpoint(client, client.authorize_url) <> "?" <> URI.encode_query(params)
   end
+  def authorize_url(), do: authorize_url(%Client{})
 
+  @doc """
+  
+  Returns the token url to request an access token. This token is used to
+  access the different API functions.
+
+  ## Example
+
+      iex> Exyt.Client.token_url()
+      "https://accounts.google.com/o/oauth2/token"
+
+  """
   def token_url(%Client{} = client) do
     endpoint(client, client.token_url)
   end
+  def token_url(), do: token_url(%Client{})
 
   defp endpoint(client, <<"/"::utf8, _::binary>> = endpoint) do
     client.site <> endpoint

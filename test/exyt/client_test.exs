@@ -1,4 +1,3 @@
-
 defmodule Exyt.ClientTest do
   use ExUnit.Case, async: true
 
@@ -22,9 +21,7 @@ defmodule Exyt.ClientTest do
 
   describe "authorize_url" do
     test "returns default URL" do
-      client = Subject.new(token: "1234")
-
-      assert Subject.authorize_url(client) ==
+      assert Subject.authorize_url() ==
         "https://accounts.google.com/o/oauth2/auth?" <> @query
     end
 
