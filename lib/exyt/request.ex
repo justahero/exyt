@@ -38,7 +38,7 @@ defmodule Exyt.Request do
 
   defp process_headers(%Client{token: token}) do
     %{}
-    |> Map.put("Authorization", "BEARER #{token}")
+    |> Map.put("Authorization", "BEARER #{token.access_token}")
     |> Map.merge(@default_headers)
     |> Map.to_list()
   end

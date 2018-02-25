@@ -3,6 +3,7 @@ defmodule Exyt.ClientTest do
 
   doctest Exyt.Client
 
+  alias Exyt.AccessToken
   alias Exyt.Client, as: Subject
 
   @authorize_query "access_type=offline" <>
@@ -17,7 +18,7 @@ defmodule Exyt.ClientTest do
     test "creates client if :token given" do
       client = Subject.new(token: "1234")
 
-      assert client.token == "1234"
+      assert client.token == %AccessToken{access_token: "1234"}
       assert client.site == "https://accounts.google.com"
     end
   end
@@ -45,10 +46,15 @@ defmodule Exyt.ClientTest do
 
   describe "token_url" do
     test "returns default URL" do
-      client = Subject.new()
+      assert Subject.token_url() ==
+        "https://accounts.google.com/o/oauth2/token"
+    end
+
+    test "returns URL with different site" do
+      client = Subject.new(site: "http://example.com")
 
       assert Subject.token_url(client) ==
-        "https://accounts.google.com/o/oauth2/token"
+        "http://example.com/o/oauth2/token"
     end
   end
 end

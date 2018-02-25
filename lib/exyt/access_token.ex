@@ -31,8 +31,21 @@ defmodule Exyt.AccessToken do
     * `refresh_token` - The refresh token to update the access token on subsequent requests
     * `expires_in` - The lifetime of the access token in seconds
 
+  ## Examples:
+
+      iex> Exyt.AccessToken.new("1234")
+      %Exyt.AccessToken{access_token: "1234"}
+
+      iex> Exyt.AccessToken.new(%{access_token: "1234", refresh_token: "abcd"})
+      %Exyt.AccessToken{access_token: "1234", refresh_token: "abcd"}
+
   """
-  @spec new(t, Keyword.t) :: t
+  @spec new(binary) :: t
+  def new(token) when is_binary(token) do
+    new(access_token: token)
+  end
+
+  @spec new(t, map) :: t
   def new(token \\ %AccessToken{}, opts) do
     struct(token, opts)
   end
