@@ -7,15 +7,11 @@ defmodule Exyt.ClientTest do
 
   @authorize_query "access_type=offline" <>
                    "&client_id=" <>
+                   "&include_granted_scopes=true" <>
                    "&redirect_uri=" <>
                    "&response_type=code" <>
-                   "&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fyoutube"
-
-  @token_query "client_id=" <>
-               "&client_secret=" <>
-               "&code=1234" <>
-               "&grant_type=authorization_code" <>
-               "&redirect_uri="
+                   "&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fyoutube" <>
+                   "&state=state_parameter_passthrough_value"
 
   describe "new" do
     test "creates client if :token given" do
@@ -51,8 +47,8 @@ defmodule Exyt.ClientTest do
     test "returns default URL" do
       client = Subject.new()
 
-      assert Subject.token_url(client, "1234") ==
-        "https://accounts.google.com/o/oauth2/token?" <> @token_query
+      assert Subject.token_url(client) ==
+        "https://accounts.google.com/o/oauth2/token"
     end
   end
 end

@@ -74,10 +74,9 @@ defmodule Exyt.Client do
   ## Example
 
       iex> Exyt.Client.authorize_url()
-      "https://accounts.google.com/o/oauth2/auth?access_type=offline&client_id=&redirect_uri=&response_type=code&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fyoutube"
-
-      iex> Exyt.Client.authorize_url(%Exyt.Client{})
-      "https://accounts.google.com/o/oauth2/auth?access_type=offline&client_id=&redirect_uri=&response_type=code&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fyoutube"
+      "https://accounts.google.com/o/oauth2/auth?access_type=offline&client_id=&" <>
+      "include_granted_scopes=true&redirect_uri=&response_type=code&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fyoutube" <>
+      "&state=state_parameter_passthrough_value"
 
   """
   @spec authorize_url(t, binary) :: binary
@@ -86,10 +85,11 @@ defmodule Exyt.Client do
       %{}
       |> Map.put(:access_type, "offline")
       |> Map.put(:client_id, client.client_id)
-      |> Map.put(:response_type, "code")
+      |> Map.put(:include_granted_scopes, true)
+      |> Map.put(:state, "state_parameter_passthrough_value")
       |> Map.put(:redirect_uri, client.redirect_uri)
+      |> Map.put(:response_type, "code")
       |> Map.put(:scope, scope)
-      # |> Map.put(:include_granted_scope, true)
 
     endpoint(client, client.authorize_url) <> "?" <> URI.encode_query(params)
   end
@@ -102,21 +102,13 @@ defmodule Exyt.Client do
 
   ## Example
 
-      iex> Exyt.Client.token_url(Exyt.Client.new(), "1234")
-      "https://accounts.google.com/o/oauth2/token?client_id=&client_secret=&code=1234&grant_type=authorization_code&redirect_uri="
+      iex> Exyt.Client.token_url(Exyt.Client.new())
+      "https://accounts.google.com/o/oauth2/token"
 
   """
-  @spec token_url(t, binary | String.Chars.t) :: binary
-  def token_url(%Client{} = client, code) do
-    params =
-      %{}
-      |> Map.put(:code, code)
-      |> Map.put(:client_id, client.client_id)
-      |> Map.put(:client_secret, client.client_secret)
-      |> Map.put(:redirect_uri, client.redirect_uri)
-      |> Map.put(:grant_type, "authorization_code")
-
-    endpoint(client, client.token_url) <> "?" <> URI.encode_query(params)
+  @spec token_url(t) :: binary
+  def token_url(%Client{} = client) do
+    endpoint(client, client.token_url)
   end
 
   defp endpoint(client, <<"/"::utf8, _::binary>> = endpoint) do

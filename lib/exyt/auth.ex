@@ -24,33 +24,38 @@ defmodule Exyt.Auth do
   """
   @spec access_token(Client.t, binary) :: {:ok, AccessToken.t} | {:error, binary}
   def access_token(%Client{} = client, code) do
-    url = Client.token_url(client, code)
+    url = Client.token_url(client)
 
     options = [
       headers: @default_headers,
       body: build_body(client, code)
     ]
 
-    HTTPotion.request(:post, url, options) |> parse_response()
+    HTTPotion.post(url, options) |> parse_response()
   end
 
   defp build_body(%Client{} = client, code) do
     %{}
     |> Map.put(:code, code)
-    |> Map.put(:client_id, client.client_id)
-    |> Map.put(:client_secret, client.client_secret)
-    |> Map.put(:redirect_uri, client.redirect_uri)
+    |> Map.put(:client_id, URI.encode_www_form(client.client_id))
+    |> Map.put(:client_secret, URI.encode_www_form(client.client_secret))
+    |> Map.put(:redirect_uri, "http://justahero.de/auth/callback")
     |> Map.put(:grant_type, "authorization_code")
+    |> URI.encode_query()
   end
-  defp parse_response(%HTTPotion.Response{} = response) do
+  defp parse_response(%HTTPotion.Response{status_code: 200} = response) do
+    json = Poison.decode!(response.body)
     {
       :ok,
       %Exyt.AccessToken{
-        access_token: response.body["access_token"],
-        refresh_token: response.body["refresh_token"],
-        expires_in: response.body["expires_in"],
+        access_token: json["access_token"],
+        refresh_token: json["refresh_token"],
+        expires_in: json["expires_in"],
       }
     }
+  end
+  defp parse_response(%HTTPotion.Response{} = response) do
+    {:error, "Status: #{response.status_code} - Body: #{response.body}"}
   end
   defp parse_response(%HTTPotion.ErrorResponse{} = response) do
     {:error, response.message}
