@@ -25,13 +25,14 @@ defmodule Exyt.Request do
   """
   @spec request(atom, Client.t, binary, map) :: t
   def request(method, %Client{} = client, path, query \\ []) do
-    url = process_url(client.site, path)
+    url = build_url(client.api_url, path, query)
 
     options = [
       headers: process_headers(client)
     ]
 
-    HTTPotion.request(:get, url, [])
+    HTTPotion.request(:get, url, options)
+    |> parse_response()
   end
 
   defp process_headers(%Client{token: token}) do
@@ -41,11 +42,21 @@ defmodule Exyt.Request do
     |> Map.to_list()
   end
 
-  @spec process_url(binary, binary | String.Chars.t) :: binary
-  defp process_url(base_url, path) do
-    base_url
-    |> to_string()
-    |> URI.merge(path |> to_string())
-    |> to_string()
+  @spec build_url(binary, binary, binary) :: binary
+  defp build_url(base_url, path, query) do
+    base_url <> path <> "?" <> query
+  end
+
+  defp parse_response(%HTTPotion.Response{} = response) do
+    {:ok,
+      %Exyt.Response{
+        status_code: response.status_code,
+        body: response.body,
+        headers: response.headers.hdrs
+      }
+    }
+  end
+  defp parse_response(%HTTPotion.ErrorResponse{} = response) do
+    {:error, response.message}
   end
 end

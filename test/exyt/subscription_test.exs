@@ -17,12 +17,14 @@ defmodule Exyt.SubscriptionTest do
   describe "list" do
     test "returns successful response", %{client: client, bypass: bypass} do
       Bypass.expect_once bypass, "GET", "/subscriptions", fn conn ->
+        assert conn.query_string == "mine=true&part=snippet%2CContentDetails"
+
         json_response(conn, 200, "subscriptions.json")
       end
 
       {:ok, response} = Subject.list(client)
 
-      assert response.status_code == 200
+      assert 200 == response.status_code
       assert Poison.Parser.parse!(response.body)
     end
   end
