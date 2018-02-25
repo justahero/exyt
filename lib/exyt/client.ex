@@ -13,14 +13,17 @@ defmodule Exyt.Client do
   This module defines a basic client to communicate with the Youtube API.
   """
 
+  @type api_url       :: binary
   @type authorize_url :: binary
   @type client_id     :: binary
+  @type client_secret :: binary
   @type redirect_uri  :: binary
   @type site          :: binary
   @type token         :: binary
   @type token_url     :: binary
 
   @type t :: %__MODULE__ {
+    api_url:       api_url,
     authorize_url: authorize_url,
     client_id:     client_id,
     redirect_uri:  redirect_uri,
@@ -29,8 +32,10 @@ defmodule Exyt.Client do
     token_url:     token_url
   }
 
-  defstruct authorize_url: @authorize_url,
+  defstruct api_url: @api_url,
+            authorize_url: @authorize_url,
             client_id: "",
+            client_secret: "",
             redirect_uri: "",
             site: @site_url,
             token: nil,
@@ -91,14 +96,22 @@ defmodule Exyt.Client do
 
   ## Example
 
-      iex> Exyt.Client.token_url()
-      "https://accounts.google.com/o/oauth2/token"
+      iex> Exyt.Client.token_url(Exyt.Client.new(), "1234")
+      "https://accounts.google.com/o/oauth2/token?client_id=&client_secret=&code=1234&grant_type=authorization_code&redirect_uri="
 
   """
-  def token_url(%Client{} = client) do
-    endpoint(client, client.token_url)
+  @spec token_url(t, binary | String.Chars.t) :: binary
+  def token_url(%Client{} = client, code) do
+    params =
+      %{}
+      |> Map.put(:code, code)
+      |> Map.put(:client_id, client.client_id)
+      |> Map.put(:client_secret, client.client_secret)
+      |> Map.put(:redirect_uri, client.redirect_uri)
+      |> Map.put(:grant_type, "authorization_code")
+
+    endpoint(client, client.token_url) <> "?" <> URI.encode_query(params)
   end
-  def token_url(), do: token_url(%Client{})
 
   defp endpoint(client, <<"/"::utf8, _::binary>> = endpoint) do
     client.site <> endpoint
