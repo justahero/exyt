@@ -12,11 +12,13 @@ defmodule Exyt.Subscription do
   ## Parameters
 
     * `client` - The Client struct to communicate with
+    * `part` - A combination of the following, "snippet", "contentDetails", "id", "subscriberSnippet"
 
   """
-  @spec list(Client.t) :: {:ok, Response.t} | {:error, binary}
-  def list(%Client{} = client) do
-    query = URI.encode_query(mine: true, part: @part)
+  @spec list(Client.t, binary) :: {:ok, Response.t} | {:error, binary}
+  def list(%Client{} = client, part \\ @part) do
+    query = %{mine: true, part: part}
+
     Request.request(:get, client, "/subscriptions", query)
   end
 end

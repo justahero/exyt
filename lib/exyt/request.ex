@@ -25,13 +25,14 @@ defmodule Exyt.Request do
   """
   @spec request(atom, Client.t, binary, map) :: t
   def request(method, %Client{} = client, path, query \\ []) do
-    url = build_url(client.api_url, path, query)
+    url = build_url(client.api_url, path)
 
     options = [
-      headers: process_headers(client)
+      headers: process_headers(client),
+      query: query
     ]
 
-    HTTPotion.request(:get, url, options)
+    HTTPotion.request(method, url, options)
     |> parse_response()
   end
 
@@ -42,9 +43,9 @@ defmodule Exyt.Request do
     |> Map.to_list()
   end
 
-  @spec build_url(binary, binary, binary) :: binary
-  defp build_url(base_url, path, query) do
-    base_url <> path <> "?" <> query
+  @spec build_url(binary, binary) :: binary
+  defp build_url(base_url, path) do
+    base_url <> path
   end
 
   defp parse_response(%HTTPotion.Response{} = response) do
