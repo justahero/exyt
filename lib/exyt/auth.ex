@@ -5,7 +5,10 @@ defmodule Exyt.Auth do
 
   """
 
-  @default_headers ["Content-Type", "application/x-www-form-urlencoded"]
+  @default_headers [
+    "Accept": "application/json",
+    "Content-Type": "application/x-www-form-urlencoded"
+  ]
 
   alias Exyt.{AccessToken, Client}
 
@@ -24,10 +27,20 @@ defmodule Exyt.Auth do
     url = Client.token_url(client, code)
 
     options = [
-      headers: @default_headers
+      headers: @default_headers,
+      body: build_body(client, code)
     ]
 
     HTTPotion.request(:post, url, options) |> parse_response()
+  end
+
+  defp build_body(%Client{} = client, code) do
+    %{}
+    |> Map.put(:code, code)
+    |> Map.put(:client_id, client.client_id)
+    |> Map.put(:client_secret, client.client_secret)
+    |> Map.put(:redirect_uri, client.redirect_uri)
+    |> Map.put(:grant_type, "authorization_code")
   end
   defp parse_response(%HTTPotion.Response{} = response) do
     {

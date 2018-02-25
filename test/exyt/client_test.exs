@@ -5,7 +5,8 @@ defmodule Exyt.ClientTest do
 
   alias Exyt.Client, as: Subject
 
-  @authorize_query "client_id=" <>
+  @authorize_query "access_type=offline" <>
+                   "&client_id=" <>
                    "&redirect_uri=" <>
                    "&response_type=code" <>
                    "&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fyoutube"

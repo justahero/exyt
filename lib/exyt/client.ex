@@ -7,6 +7,10 @@ defmodule Exyt.Client do
   @api_url "https://www.googleapis.com/youtube/v3"
   @scope "https://www.googleapis.com/auth/youtube"
 
+  @client_id Application.get_env(:exyt, :client_id, "")
+  @client_secret Application.get_env(:exyt, :client_secret, "")
+  @redirect_uri Application.get_env(:exyt, :redirect_uri, "")
+
   alias Exyt.{Client}
 
   @moduledoc """
@@ -34,9 +38,9 @@ defmodule Exyt.Client do
 
   defstruct api_url: @api_url,
             authorize_url: @authorize_url,
-            client_id: "",
-            client_secret: "",
-            redirect_uri: "",
+            client_id: @client_id,
+            client_secret: @client_secret,
+            redirect_uri: @redirect_uri,
             site: @site_url,
             token: nil,
             token_url: @token_url
@@ -70,20 +74,22 @@ defmodule Exyt.Client do
   ## Example
 
       iex> Exyt.Client.authorize_url()
-      "https://accounts.google.com/o/oauth2/auth?client_id=&redirect_uri=&response_type=code&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fyoutube"
+      "https://accounts.google.com/o/oauth2/auth?access_type=offline&client_id=&redirect_uri=&response_type=code&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fyoutube"
 
       iex> Exyt.Client.authorize_url(%Exyt.Client{})
-      "https://accounts.google.com/o/oauth2/auth?client_id=&redirect_uri=&response_type=code&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fyoutube"
+      "https://accounts.google.com/o/oauth2/auth?access_type=offline&client_id=&redirect_uri=&response_type=code&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fyoutube"
 
   """
   @spec authorize_url(t, binary) :: binary
   def authorize_url(%Client{} = client, scope \\ @scope) do
     params =
       %{}
-      |> Map.put(:response_type, "code")
+      |> Map.put(:access_type, "offline")
       |> Map.put(:client_id, client.client_id)
+      |> Map.put(:response_type, "code")
       |> Map.put(:redirect_uri, client.redirect_uri)
       |> Map.put(:scope, scope)
+      # |> Map.put(:include_granted_scope, true)
 
     endpoint(client, client.authorize_url) <> "?" <> URI.encode_query(params)
   end
