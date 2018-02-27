@@ -21,6 +21,7 @@ defmodule Exyt.Auth do
     * `client` - The Client struct to fetch access token with
     * `code` - The authorization code fetched from OAuth2 callback
 
+  Returns a tuple with access token or an error message
   """
   @spec access_token(Client.t, binary) :: {:ok, AccessToken.t} | {:error, binary}
   def access_token(%Client{} = client, code) do
@@ -32,6 +33,25 @@ defmodule Exyt.Auth do
     ]
 
     HTTPotion.post(url, options) |> parse_response()
+  end
+
+  @doc """
+
+  Fetches the access / refresh token
+
+  ## Parameters
+
+    * `client` - The client struct to fetch access token with
+    * `code` - The authorization code fetched from OAuth2 callback
+
+  Returns a `%Exyt.AccessToken` with the token or raises an exception with error message
+  """
+  @spec access_token!(Client.t, binary) :: AccessToken.t
+  def access_token!(%Client{} = client, code) do
+    case access_token(client, code) do
+      {:ok, token}      -> token
+      {:error, message} -> raise message
+    end
   end
 
   defp build_body(%Client{} = client, code) do
