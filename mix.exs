@@ -11,6 +11,8 @@ defmodule Exyt.Mixfile do
       version: @version,
       elixir: "~> 1.4",
       description: description(),
+      source_url: @project_url,
+      homepage_url: @project_url,
       docs: docs(),
       elixirc_paths: elixirc_paths(Mix.env),
       start_permanent: Mix.env == :prod,
@@ -22,6 +24,7 @@ defmodule Exyt.Mixfile do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
+      applications: [:httpotion],
       extra_applications: [:logger]
     ]
   end
@@ -32,8 +35,8 @@ defmodule Exyt.Mixfile do
 
   defp docs do
     [
-      extras: ["README.md"],
-      main: "readme"
+      main: "readme",
+      extras: ["README.md"]
     ]
   end
 
@@ -49,7 +52,15 @@ defmodule Exyt.Mixfile do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:mix_test_watch, "~> 0.5", only: :dev, runtime: false}
+      {:httpotion, "~> 3.1.0"},
+      {:poison, "~> 3.1.0"},
+
+      {:bypass, "~> 0.8", only: :test},
+      {:mix_test_watch, "~> 0.5", only: :dev, runtime: false},
+
+      {:excoveralls, "~> 0.8.1", only: :test},
+      {:ex_doc, "~> 0.18.3", only: [:dev, :test, :docs]},
+      {:earmark, "~> 1.2.4", only: [:dev, :test, :docs]}
     ]
   end
 

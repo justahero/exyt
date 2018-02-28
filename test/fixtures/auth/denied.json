@@ -1,0 +1,4 @@
+{
+  "error": "Invalid client",
+  "error_description": "The OAuth client was not found"
+}
