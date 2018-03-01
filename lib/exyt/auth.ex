@@ -95,12 +95,10 @@ defmodule Exyt.Auth do
   end
 
   defp parse_response(%HTTPotion.Response{status_code: 200} = response, %Client{} = client) do
-    json  = Poison.decode!(response.body)
+    json  = Poison.Parser.parse!(response.body, keys: :atoms)
     token = client.token || %AccessToken{}
-    {
-      :ok,
-      Map.merge(token, parse_token(json))
-    }
+
+    {:ok, Map.merge(token, parse_token(json))}
   end
   defp parse_response(%HTTPotion.Response{} = response, %Client{}) do
     {:error, "Status: #{response.status_code} - Body: #{response.body}"}
@@ -108,17 +106,10 @@ defmodule Exyt.Auth do
   defp parse_response(%HTTPotion.ErrorResponse{} = response, %Client{}) do
     {:error, response.message}
   end
-  defp parse_token(%{"access_token" => access, "refresh_token" => refresh} = json) do
-    %{
-      access_token: access,
-      refresh_token: refresh,
-      expires_in: json["expires_in"],
-    }
+  defp parse_token(%{access_token: _, refresh_token: _} = json) do
+    Map.take(json, [:access_token, :refresh_token, :expires_in])
   end
-  defp parse_token(%{"access_token" => access} = json) do
-    %{
-      access_token: access,
-      expires_in: json["expires_in"],
-    }
+  defp parse_token(%{access_token: _} = json) do
+    Map.take(json, [:access_token, :expires_in])
   end
 end
