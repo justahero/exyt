@@ -47,22 +47,35 @@ defmodule Exyt.Client do
 
   @doc """
 
-  Builds a Client struct
+  Builds a Client struct.
+
+  Without configured settings, the following parameters are required to authorize against Google OAuth,
+  `client_id`, `client_secret` and `redirect_uri`.
+
+  When an access token is already available the `%Exyt.Client` struct can be initialized with
+  the `token` parameter.
 
   ## Client struct fields
 
-    * `authorize_url` - absolute or relative URL path to authorization endpoint
-    * `site` - The site URL to authenticate with
-    * `token` - The `%Exyt.AccessToken{}` struct received after successful authorization
+  Without configured settings, the following parameters are required for authorization
+
+    * `client_id` - The client id of the credentials.
+    * `client_secret` - The client secret of the credentials..
+    * `redirect_uri` - The OAuth2 callback URL that contains authorization code.
+    * `authorize_url` - The absolute or relative URL path to the authorization endpoint.
+    * `token_url` - The absolute or relative URL to the access token endpoint.
+    * `site` - The site URL to authenticate with.
+    * `token` - Either a string containing the access token or a`%Exyt.AccessToken{}` struct
+       received after successful authorization.
+    * `api_url` - The absolute URL to Youtube API v3.
 
   ## Examples
 
+      iex> Exyt.Client.new(client_id: "1234…", client_secret: "abcd…", redirect_uri: "http://example.com/callback")
+      %Exyt.Client{client_id: "1234…", client_secret: "abcd…", redirect_uri: "http://example.com/callback"}
+
       iex> Exyt.Client.new(token: "123456")
-      %Exyt.Client{api_url: "https://www.googleapis.com/youtube/v3",
-      authorize_url: "/o/oauth2/auth", client_id: "", client_secret: "",
-      redirect_uri: "", site: "https://accounts.google.com",
-      token: %Exyt.AccessToken{access_token: "123456", expires_in: nil,
-      refresh_token: ""}, token_url: "/o/oauth2/token"}
+      %Exyt.Client{token: %Exyt.AccessToken{access_token: "123456"}}
 
   """
   @spec new(t, Keyword.t) :: t
@@ -83,7 +96,19 @@ defmodule Exyt.Client do
 
   @doc """
 
-  Returns the authorization url with request token and redirect uri
+  Returns the authorization url with authorization informaation.
+
+  The authorization URL includes the following query parameters
+
+    * `access_type` - is set to `offline` which allows to refresh the access token later
+    * `client_id` - The `client_id` value as given on Google's Credentials page
+    * `include_granted_scopes` - set to `true` to enable incremental authorization. See the
+      [Incremental Authorization](https://developers.google.com/youtube/v3/guides/auth/server-side-web-apps#incrementalAuth)
+      section.
+    * `redirect_uri` - The OAuth callback URL that Google calls after successful authorization
+    * `response_type` - value is `code` to return an authorization code
+    * `state` - set to `state_parameter_passthrough_value` to allow this Client to send
+      application specific key, value pairs back.
 
   ## Example
 

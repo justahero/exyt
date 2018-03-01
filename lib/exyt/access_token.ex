@@ -10,16 +10,19 @@ defmodule Exyt.AccessToken do
   @type access_token  :: binary
   @type refresh_token :: binary
   @type expires_in    :: integer
+  @type token_type    :: binary
 
   @type t :: %__MODULE__ {
     access_token:  access_token,
     refresh_token: refresh_token,
-    expires_in:    expires_in
+    expires_in:    expires_in,
+    token_type:    token_type
   }
 
   defstruct access_token: "",
             refresh_token: "",
-            expires_in: nil
+            expires_in: nil,
+            token_type: "Bearer"
 
   @doc """
   
@@ -34,6 +37,9 @@ defmodule Exyt.AccessToken do
   ## Examples:
 
       iex> Exyt.AccessToken.new("1234")
+      %Exyt.AccessToken{access_token: "1234"}
+
+      iex> Exyt.AccessToken.new(%Exyt.AccessToken{}, %{access_token: "1234"})
       %Exyt.AccessToken{access_token: "1234"}
 
       iex> Exyt.AccessToken.new(%{access_token: "1234", refresh_token: "abcd"})

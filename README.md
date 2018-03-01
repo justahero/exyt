@@ -117,7 +117,6 @@ The following libraries are used
 
 * [HTTPotion](https://github.com/myfreeweb/httpotion) - a HTTP client library
 * [Poison](https://github.com/devinus/poison) - a JSON library 
-* [Mock](https://github.com/jjh42/mock) - a library for mocking HTTP requests in tests
 
 
 ### Ressources
