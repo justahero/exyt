@@ -36,6 +36,9 @@ defmodule Exyt.AccessToken do
       iex> Exyt.AccessToken.new("1234")
       %Exyt.AccessToken{access_token: "1234"}
 
+      iex> Exyt.AccessToken.new(%Exyt.AccessToken{}, %{access_token: "1234"})
+      %Exyt.AccessToken{access_token: "1234"}
+
       iex> Exyt.AccessToken.new(%{access_token: "1234", refresh_token: "abcd"})
       %Exyt.AccessToken{access_token: "1234", refresh_token: "abcd"}
 
