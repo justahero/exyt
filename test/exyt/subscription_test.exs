@@ -17,7 +17,9 @@ defmodule Exyt.SubscriptionTest do
   describe "list" do
     test "returns successful response", %{client: client, bypass: bypass} do
       Bypass.expect_once bypass, "GET", "/subscriptions", fn conn ->
-        assert conn.query_string == "mine=true&part=snippet%2CContentDetails"
+        assert List.keyfind(conn.req_headers, "authorization", 0) == {"authorization", "Bearer 1234"}
+        assert conn.request_path == "/subscriptions"
+        assert conn.query_string == "mine=true&part=snippet"
 
         json_response(conn, 200, "subscriptions.json")
       end
@@ -25,7 +27,7 @@ defmodule Exyt.SubscriptionTest do
       {:ok, response} = Subject.list(client)
 
       assert 200 == response.status_code
-      assert Poison.Parser.parse!(response.body)
+      assert Enum.count(response.headers) > 0
     end
   end
 end

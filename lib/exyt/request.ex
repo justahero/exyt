@@ -32,13 +32,12 @@ defmodule Exyt.Request do
       query: query
     ]
 
-    HTTPotion.request(method, url, options)
-    |> parse_response()
+    HTTPotion.request(method, url, options) |> parse_response()
   end
 
   defp process_headers(%Client{token: token}) do
     %{}
-    |> Map.put("Authorization", "BEARER #{token.access_token}")
+    |> Map.put(:Authorization, "Bearer #{token.access_token}")
     |> Map.merge(@default_headers)
     |> Map.to_list()
   end
@@ -52,7 +51,7 @@ defmodule Exyt.Request do
     {:ok,
       %Exyt.Response{
         status_code: response.status_code,
-        body: response.body,
+        body: Poison.Parser.parse!(response.body),
         headers: response.headers.hdrs
       }
     }
