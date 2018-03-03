@@ -21,8 +21,8 @@ defmodule Exyt.Response do
   def new(code, headers, body) do
     %__MODULE__{
       status_code: code,
-      headers: headers,
-      body: body
+      headers:     headers,
+      body:        body
     }
   end
 end
