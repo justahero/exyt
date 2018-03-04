@@ -53,5 +53,29 @@ defmodule Exyt.SubscriptionTest do
 
       assert 200 == response.status_code
     end
+
+    test "accepts filter list", %{client: client, bypass: bypass} do
+      Bypass.expect_once bypass, "GET", "/subscriptions", fn conn ->
+        assert conn.query_string == "channelId=hello&part=id"
+
+        json_response(conn, 200, "subscriptions.json")
+      end
+
+      {:ok, response} = Subject.list(client, :id, %{:channelId => "hello"})
+
+      assert 200 == response.status_code
+    end
+
+    test "filters unknown filter keys from list", %{client: client, bypass: bypass} do
+      Bypass.expect_once bypass, "GET", "/subscriptions", fn conn ->
+        assert conn.query_string == "channelId=hello&part=id"
+
+        json_response(conn, 200, "subscriptions.json")
+      end
+
+      {:ok, response} = Subject.list(client, :id, %{:channelId => "hello"})
+
+      assert 200 == response.status_code
+    end
   end
 end
