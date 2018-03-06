@@ -6,15 +6,9 @@ defmodule Exyt.Subscription do
 
   @filters   ["channelId", "id", "mine", "myRecentSubscribers", "mySubscribers"]
   @parts     ["contentDetails", "id", "snippet", "subscriberSnippet"]
+  @optionals ["forChannelId", "maxResults", "order", "pageToken"]
 
-  @optionals [
-    :forChannelId,
-    :maxResults,
-    :onBehalfOfContentOwner,
-    :onBehalfOfContentOwnerChannel,
-    :order,
-    :pageToken
-  ]
+  @order_method ["alphabetical", "relevance", "unread"]
 
   @type part     :: binary | atom
   @type filter   :: map()
@@ -40,11 +34,13 @@ defmodule Exyt.Subscription do
     Request.request(:get, client, "/subscriptions", query)
   end
 
+  @doc false
   @spec parse_arguments(part, filter, optional) :: keyword()
   def parse_arguments(part, filter, optional) do
     %{}
-    |> Map.merge(filter)
     |> Map.put("part", parse_part(part))
+    |> Map.merge(parse_filter(filter))
+    |> Map.merge(optional)
     |> Enum.sort()
   end
 
@@ -60,7 +56,8 @@ defmodule Exyt.Subscription do
 
   defp parse_filter(filter) do
     filter
-    |> Enum.map(fn{k, v} -> {to_string(k, v)} end)
-    |> Enum.filter(fn{k, v} -> Enum.member?(@filters, k) end)
+    |> Enum.reduce(%{}, fn({k,v}, acc) -> Map.put(acc, to_string(k), v) end)
+    |> Enum.filter(fn{k, _} -> Enum.member?(@filters, k) end)
+    |> Map.new()
   end
 end

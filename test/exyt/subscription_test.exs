@@ -73,7 +73,19 @@ defmodule Exyt.SubscriptionTest do
         json_response(conn, 200, "subscriptions.json")
       end
 
-      {:ok, response} = Subject.list(client, :id, %{:channelId => "hello"})
+      {:ok, response} = Subject.list(client, [:id, :nope], %{:channelId => "hello"})
+
+      assert 200 == response.status_code
+    end
+
+    test "accepts optional parameter forChannelId as list", %{client: client, bypass: bypass} do
+      Bypass.expect_once bypass, "GET", "/subscriptions", fn conn ->
+        assert conn.query_string == "forChannelId=test&channelId=lisa&part=id"
+
+        json_response(conn, 200, "subscriptions.json")
+      end
+
+      {:ok, response} = Subject.list(client, :id, %{:channelId => "lisa"}, %{:forChannelId => "test"})
 
       assert 200 == response.status_code
     end
