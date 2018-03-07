@@ -80,7 +80,7 @@ defmodule Exyt.SubscriptionTest do
 
     test "accepts optional parameter forChannelId as list", %{client: client, bypass: bypass} do
       Bypass.expect_once bypass, "GET", "/subscriptions", fn conn ->
-        assert conn.query_string == "forChannelId=test&channelId=lisa&part=id"
+        assert conn.query_string == "channelId=lisa&forChannelId=test&part=id"
 
         json_response(conn, 200, "subscriptions.json")
       end

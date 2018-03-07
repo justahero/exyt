@@ -39,8 +39,8 @@ defmodule Exyt.Subscription do
   def parse_arguments(part, filter, optional) do
     %{}
     |> Map.put("part", parse_part(part))
-    |> Map.merge(parse_filter(filter))
-    |> Map.merge(optional)
+    |> Map.merge(parse_options(filter, @filters))
+    |> Map.merge(parse_options(optional, @optionals))
     |> Enum.sort()
   end
 
@@ -54,10 +54,10 @@ defmodule Exyt.Subscription do
     |> Enum.join(",")
   end
 
-  defp parse_filter(filter) do
-    filter
+  defp parse_options(opts, list) do
+    opts
     |> Enum.reduce(%{}, fn({k,v}, acc) -> Map.put(acc, to_string(k), v) end)
-    |> Enum.filter(fn{k, _} -> Enum.member?(@filters, k) end)
+    |> Enum.filter(fn{k, _} -> Enum.member?(list, k) end)
     |> Map.new()
   end
 end
