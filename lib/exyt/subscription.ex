@@ -8,8 +8,6 @@ defmodule Exyt.Subscription do
   @parts     ["contentDetails", "id", "snippet", "subscriberSnippet"]
   @optionals ["forChannelId", "maxResults", "order", "pageToken"]
 
-  @order_method ["alphabetical", "relevance", "unread"]
-
   @type part     :: binary | atom
   @type filter   :: map()
   @type optional :: map()
@@ -39,8 +37,8 @@ defmodule Exyt.Subscription do
   def parse_arguments(part, filter, optional) do
     %{}
     |> Map.put("part", parse_part(part))
-    |> Map.merge(parse_options(filter, @filters))
-    |> Map.merge(parse_options(optional, @optionals))
+    |> Map.merge(parse(filter, @filters))
+    |> Map.merge(parse(optional, @optionals))
     |> Enum.sort()
   end
 
@@ -54,10 +52,13 @@ defmodule Exyt.Subscription do
     |> Enum.join(",")
   end
 
-  defp parse_options(opts, list) do
+  defp parse(opts, list) when is_list(opts) do
+    Enum.into(opts, %{}) |> parse(list)
+  end
+  defp parse(opts, list) when is_map(opts) do
     opts
     |> Enum.reduce(%{}, fn({k,v}, acc) -> Map.put(acc, to_string(k), v) end)
     |> Enum.filter(fn{k, _} -> Enum.member?(list, k) end)
-    |> Map.new()
+    |> Enum.into(%{})
   end
 end
