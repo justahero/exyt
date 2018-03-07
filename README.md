@@ -1,5 +1,7 @@
 # Exyt
 
+[![Build Status](https://travis-ci.org/justahero/exyt.svg?branch=master)](https://travis-ci.org/justahero/exyt)
+
 An elixir client for the [Youtube API (v3)](https://developers.google.com/youtube/v3/docs/).
 
 ## Installation
