@@ -21,3 +21,5 @@ erl_crash.dump
 
 # ignore dev configuration file
 config/dev.exs
+
+/scripts/
