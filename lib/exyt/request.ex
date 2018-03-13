@@ -23,19 +23,21 @@ defmodule Exyt.Request do
     * `query` - optional map of query parameters
 
   """
-  @spec request(atom, Client.t, binary, map) :: t
-  def request(method, %Client{} = client, path, query \\ []) do
+  @spec request(atom, Client.t, binary, Keyword.t, Keyword.t) :: t
+  def request(method, %Client{} = client, path, query \\ [], body \\ "") do
     url = build_url(client.api_url, path)
 
+    # TODO add body argument if necessary
     options = [
-      headers: process_headers(client),
-      query: query
+      headers: build_headers(client),
+      query: query,
+      body: Poison.encode!(body)
     ]
 
     HTTPotion.request(method, url, options) |> parse_response()
   end
 
-  defp process_headers(%Client{token: token}) do
+  defp build_headers(%Client{token: token}) do
     %{}
     |> Map.put(:Authorization, "Bearer #{token.access_token}")
     |> Map.merge(@default_headers)

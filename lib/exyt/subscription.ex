@@ -8,9 +8,10 @@ defmodule Exyt.Subscription do
   @parts     ["contentDetails", "id", "snippet", "subscriberSnippet"]
   @optionals ["forChannelId", "maxResults", "order", "pageToken"]
 
-  @type part     :: binary | atom
-  @type filter   :: map()
-  @type optional :: map()
+  @type part      :: binary | atom
+  @type filter    :: map()
+  @type optional  :: map()
+  @type channelId :: binary | String.Chars.t
 
   alias Exyt.Response
 
@@ -30,6 +31,33 @@ defmodule Exyt.Subscription do
   def list(%Client{} = client, part \\ @part, filter \\ @filter, optional \\ %{}) do
     query = parse_arguments(part, filter, optional)
     Request.request(:get, client, "/subscriptions", query)
+  end
+
+  @doc """
+
+  Adds / inserts a new subscription.
+
+  For more details see https://developers.google.com/youtube/v3/docs/subscriptions/insert.
+
+  ## Parameters
+
+    * `client` - (required) The Client struct to communicate with
+    * `channelId` - the Youtube channel id to subscribe to
+
+  """
+  @spec insert(Client.t, channelId) :: {:ok, Response.t} | {:error, binary}
+  def insert(%Client{} = client, channelId) do
+    body = %{
+      "snippet" => %{
+        "resourceId" => %{
+          "kind" => "youtube#channel",
+          "channelId" => channelId
+        }
+      }
+    }
+    query = %{"part" => "snippet"}
+
+    Request.request(:post, client, "/subscriptions", query, body)
   end
 
   @doc false

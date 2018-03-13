@@ -1,0 +1,26 @@
+{
+  "kind": "youtube#subscription",
+  "etag": "\"_gJQceDMxJ8gP-8T2HLXUoURK8c/NSOOXdT4MPv1abeWiIhWCrxVSIA\"",
+  "id": "CyQMw3XqGAsDDTMqs8bpx9CY0z2xL_8YNbCz4YqLJgA",
+  "snippet": {
+    "publishedAt": "2013-02-13T15:15:39.000Z",
+    "title": "Google Developers",
+    "description": "The Google Developers channel features talks from events, educational series, best practices, tips, and the latest updates across our products and platforms.",
+    "resourceId": {
+      "kind": "youtube#channel",
+      "channelId": "UC_x5XG1OV2P6uZZ5FSM9Ttw"
+    },
+    "channelId": "UCjkHhkpb-jKIEbNPvja-H0Q",
+    "thumbnails": {
+      "default": {
+        "url": "https://yt3.ggpht.com/-Fgp8KFpgQqE/AAAAAAAAAAI/AAAAAAAAAAA/Wyh1vV5Up0I/s88-c-k-no-mo-rj-c0xffffff/photo.jpg"
+      },
+      "medium": {
+        "url": "https://yt3.ggpht.com/-Fgp8KFpgQqE/AAAAAAAAAAI/AAAAAAAAAAA/Wyh1vV5Up0I/s240-c-k-no-mo-rj-c0xffffff/photo.jpg"
+      },
+      "high": {
+        "url": "https://yt3.ggpht.com/-Fgp8KFpgQqE/AAAAAAAAAAI/AAAAAAAAAAA/Wyh1vV5Up0I/s800-c-k-no-mo-rj-c0xffffff/photo.jpg"
+      }
+    }
+  }
+}
