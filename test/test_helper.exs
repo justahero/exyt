@@ -34,9 +34,14 @@ defmodule Exyt.TestHelpers do
     "http://localhost:#{port}"
   end
 
-  def json_response(conn, status_code, file_path) do
+  def json_response(conn, status_code, file_path) when is_binary(file_path) do
     conn
     |> put_resp_header("content-type", "application/json")
     |> send_resp(status_code, load_json!(file_path))
+  end
+  def json_response(conn, status_code) do
+    conn
+    |> put_resp_header("content-type", "application/json")
+    |> send_resp(status_code, Poison.encode!(%{}))
   end
 end
