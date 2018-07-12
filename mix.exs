@@ -1,7 +1,7 @@
 defmodule Exyt.Mixfile do
   use Mix.Project
 
-  @version "0.2.0"
+  @version "0.2.1"
   @project_url "https://www.github.com/justahero/exyt"
 
   def project do
