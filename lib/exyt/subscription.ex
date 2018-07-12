@@ -13,6 +13,8 @@ defmodule Exyt.Subscription do
   @type optional  :: map()
   @type channelId :: binary | String.Chars.t
 
+  @type response  :: {:ok, Response.t} | {:error, binary}
+
   alias Exyt.Response
 
   @doc """
@@ -27,7 +29,7 @@ defmodule Exyt.Subscription do
     * `optional` - A list of optional filters and arguments to refine the result list, see `@optionals`
 
   """
-  @spec list(Client.t, part, filter, map) :: {:ok, Response.t} | {:error, binary}
+  @spec list(Client.t, part, filter, map) :: response
   def list(%Client{} = client, part \\ @part, filter \\ @filter, optional \\ %{}) do
     query = parse_arguments(part, filter, optional)
     Request.request(:get, client, "/subscriptions", query)
@@ -42,11 +44,11 @@ defmodule Exyt.Subscription do
   ## Parameters
 
     * `client` - (required) The Client struct to communicate with
-    * `channelId` - the Youtube channel id to subscribe to
+    * `channelId` - (required) the Youtube channel id to subscribe to
 
   """
-  @spec insert(Client.t, channelId) :: {:ok, Response.t} | {:error, binary}
-  def insert(%Client{} = client, channelId) do
+  @spec insert(Client.t, channelId) :: response
+  def insert(%Client{} = client, channelId) when is_binary(channelId) do
     body = %{
       "snippet" => %{
         "resourceId" => %{
@@ -60,9 +62,26 @@ defmodule Exyt.Subscription do
     Request.request(:post, client, "/subscriptions", query, body)
   end
 
+  @doc """
+
+  Deletes / removes a subscription by given channel id
+
+  ## Parameters
+
+    * `client` - (required) The client struct to communicate with
+    * `id` - (required) The id of the channel to unsbuscribe from
+
+  """
+  @spec delete(Client.t, channelId) :: response
+  def delete(%Client{} = client, id) when is_binary(id) do
+    query = %{"id" => id}
+
+    Request.request(:delete, client, "/subscriptions", query)
+  end
+
   @doc false
   @spec parse_arguments(part, filter, optional) :: keyword()
-  def parse_arguments(part, filter, optional) do
+  defp parse_arguments(part, filter, optional) do
     %{}
     |> Map.put("part", parse_part(part))
     |> Map.merge(parse(filter, @filters))
@@ -70,9 +89,9 @@ defmodule Exyt.Subscription do
     |> Enum.sort()
   end
 
-  def parse_part(part) when is_atom(part), do: parse_part([part])
-  def parse_part(part) when is_binary(part), do: parse_part([part])
-  def parse_part(parts) when is_list(parts) do
+  defp parse_part(part) when is_atom(part), do: parse_part([part])
+  defp parse_part(part) when is_binary(part), do: parse_part([part])
+  defp parse_part(parts) when is_list(parts) do
     parts
     |> Enum.map(fn(part) -> to_string(part) end)
     |> Enum.filter(fn(part) -> Enum.member?(@parts, part) end)

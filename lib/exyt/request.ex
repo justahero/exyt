@@ -53,7 +53,7 @@ defmodule Exyt.Request do
     {:ok,
       %Exyt.Response{
         status_code: response.status_code,
-        body: Poison.Parser.parse!(response.body),
+        body: parse_body(response.body),
         headers: response.headers.hdrs
       }
     }
@@ -61,4 +61,6 @@ defmodule Exyt.Request do
   defp parse_response(%HTTPotion.ErrorResponse{} = response) do
     {:error, response.message}
   end
+  defp parse_body(""), do: ""
+  defp parse_body(body), do: Poison.Parser.parse!(body)
 end

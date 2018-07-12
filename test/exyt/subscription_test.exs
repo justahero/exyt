@@ -131,4 +131,29 @@ defmodule Exyt.SubscriptionTest do
       assert 200 == response.status_code
     end
   end
+
+  describe "delete" do
+    test "returns successful response", %{client: client, bypass: bypass} do
+      Bypass.expect_once bypass, "DELETE", "/subscriptions", fn conn ->
+        assert conn.query_string == "id=UC_x5XG1OV2P6uZZ5FSM9Ttw"
+        assert conn.method == "DELETE"
+
+        json_response(conn, 204)
+      end
+
+      {:ok, response} = Subject.delete(client, "UC_x5XG1OV2P6uZZ5FSM9Ttw")
+      assert 204 == response.status_code
+    end
+
+    test "returns error when subscription is already deleted", %{client: client, bypass: bypass} do
+      Bypass.expect_once bypass, "DELETE", "/subscriptions", fn conn ->
+        assert conn.method == "DELETE"
+
+        json_response(conn, 404, "subscriptions/delete_404.json")
+      end
+
+      {:ok, response} = Subject.delete(client, "UC_x5XG1OV2P6uZZ5FSM9Ttw")
+      assert 404 == response.status_code
+    end
+  end
 end

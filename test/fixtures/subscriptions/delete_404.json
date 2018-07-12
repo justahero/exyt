@@ -1,0 +1,13 @@
+{
+  "error": {
+    "errors": [
+      {
+        "domain": "youtube.subscription",
+        "reason": "subscriptionNotFound",
+        "message": "The subscription that you are trying to delete cannot be found. Check the value of the requests id parameter to ensure that it is correct."
+      }
+    ],
+    "code": 404,
+    "message": "The subscription that you are trying to delete cannot be found. Check the value of the requests id parameter to ensure that it is correct."
+  }
+}

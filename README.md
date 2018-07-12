@@ -11,7 +11,7 @@ by adding `exyt` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
-  [{:exyt, "~> 0.1.0"}]
+  [{:exyt, "~> 0.2.0"}]
 end
 ```
 
