@@ -59,7 +59,7 @@ defmodule Exyt.Mixfile do
       {:bypass, "~> 0.8", only: :test},
       {:mix_test_watch, "~> 0.5", only: :dev, runtime: false},
 
-      {:excoveralls, "~> 0.8.1", only: :test},
+      {:excoveralls, "~> 0.9.0", only: :test},
       {:ex_doc, "~> 0.18.3", only: [:dev, :test, :docs]},
       {:earmark, "~> 1.2.4", only: [:dev, :test, :docs]}
     ]
