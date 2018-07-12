@@ -81,7 +81,7 @@ defmodule Exyt.Subscription do
 
   @doc false
   @spec parse_arguments(part, filter, optional) :: keyword()
-  def parse_arguments(part, filter, optional) do
+  defp parse_arguments(part, filter, optional) do
     %{}
     |> Map.put("part", parse_part(part))
     |> Map.merge(parse(filter, @filters))
@@ -89,9 +89,9 @@ defmodule Exyt.Subscription do
     |> Enum.sort()
   end
 
-  def parse_part(part) when is_atom(part), do: parse_part([part])
-  def parse_part(part) when is_binary(part), do: parse_part([part])
-  def parse_part(parts) when is_list(parts) do
+  defp parse_part(part) when is_atom(part), do: parse_part([part])
+  defp parse_part(part) when is_binary(part), do: parse_part([part])
+  defp parse_part(parts) when is_list(parts) do
     parts
     |> Enum.map(fn(part) -> to_string(part) end)
     |> Enum.filter(fn(part) -> Enum.member?(@parts, part) end)

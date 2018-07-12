@@ -1,7 +1,7 @@
 defmodule Exyt.Mixfile do
   use Mix.Project
 
-  @version "0.1.0"
+  @version "0.2.0"
   @project_url "https://www.github.com/justahero/exyt"
 
   def project do
@@ -15,6 +15,7 @@ defmodule Exyt.Mixfile do
       homepage_url: @project_url,
       docs: docs(),
       elixirc_paths: elixirc_paths(Mix.env),
+      build_embedded: Mix.env == :prod,
       start_permanent: Mix.env == :prod,
       deps: deps(),
       package: package()
